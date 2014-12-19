@@ -1,7 +1,13 @@
+/*
+ * decrypt.c
+ * 
+ * decrypting the ciphertext of assignment1 in coursera
+ * compiles on every platform
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 #define MAX_BUF_LEN 1024
 
