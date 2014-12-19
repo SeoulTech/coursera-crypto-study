@@ -5,7 +5,8 @@
 
 #define MAX_BUF_LEN 1024
 
-#define MAX_ASCII 128
+#define MIN_ASCII 0
+#define MAX_ASCII 127
 
 #define MIN_KEY_LEN 1
 #define MAX_KEY_LEN 13
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
 	FILE *fp_in;
 	size_t bytes_read;
 	size_t key_len;
-	int i, j;
+	int i;
 
 	if (argc != 2) {
 		fprintf(stderr, "usage: %s <encrypted file name>\n", argv[0]);
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
 
 double square_sum_distribution(unsigned char ctxt[], size_t ctxt_len, size_t key_len)
 {
-	unsigned int ascii_freq[MAX_ASCII];
+	unsigned int ascii_freq[MAX_ASCII + 1];
 	unsigned int cand_txt_len;
 	double sqr_sum;
 	unsigned char ch;
@@ -102,7 +103,8 @@ void guess(unsigned char ctxt[], size_t ctxt_len, size_t key_len, int offset)
 	unsigned char key_cand[MAX_BUF_LEN];
 	int offst;
 	size_t len;
-	int i, j, k;
+	unsigned char c;
+	int i, j;
 
 	/* init */
 	memset(enc_buf, 0, sizeof(enc_buf));
@@ -110,54 +112,54 @@ void guess(unsigned char ctxt[], size_t ctxt_len, size_t key_len, int offset)
 	offst = offset;
 
 	/* collect ciphered text that are encrpyted with the same key value based on a specific offset */
-	i = 0;
+	len = 0;
 	while (offst <= ctxt_len) {
-		enc_buf[i] = ctxt[offst]; //get ciphered char from ciphered text and put it in buffer
+		enc_buf[len] = ctxt[offst]; //get ciphered char from ciphered text and put it in buffer
 		offst += key_len; //skip by key_len in ciphered text
-		i++;
+		len++;
 	}
 
 	/* brute force key with all ascii code */
-	len = i; //length of the collected ciphered text
-	k = 0;
+	j = 0;
 	/** go through all ASCII (key can be any char in ASCII) **/
-	for (i = 0x00; i < 0xFF; i++) {		
+	for (c = MIN_ASCII; c <= MAX_ASCII; c++) {		
 		int lwr_case, upr_case, punc, spc, nl;
 
 		lwr_case = upr_case = punc = spc = nl = 0;
 		/* go through all collected ciphered text */
-		for (j = 0; j < len; j++) {
+		for (i = 0; i < len; i++) {
 			unsigned char dec_char; //temp space to store decrypted char
 
 			/* decrypt collected ciphered text with selected char */
 			if (enc_buf[j] != '\n') //new line is not encrypted
-				dec_char = enc_buf[j] ^ (unsigned char) i; //decrypt key
+				dec_char = enc_buf[j] ^ c; //decrypt key
 			else
 				dec_char = enc_buf[j]; //just put it in
 
 			/* check if the decrypted char meets the condition range of ASCII code in assignment instruction */
-			if (dec_char >= 'a' && dec_char <= 'z') 
+			if (dec_char >= 'a' && dec_char <= 'z')
 				lwr_case++;
 			else if (dec_char >= 'A' && dec_char <= 'Z')
 				upr_case++;
-			else if (dec_char == ',')
-				punc++;
 			else if (dec_char == ' ')
 				spc++;
+			else if (dec_char == ',')
+				punc++;
 			else if (dec_char == '\n')
 				nl++;
-			else
-				break; //if other char, break out of loop because it doesn't satisfy the requirement
-
+			else //everything other than the requirement
+				break;
 		}
-		/* if above loop reaches the end without break, put the key value in the key candidate */
-		if (j == len) {
-			key_cand[k] = (unsigned char) i;
-			k++;
+		/* filter out the candidate keys */
+		if (i == len) {
+			if (lwr_case != 0 && spc != 0) { //1st filter
+				key_cand[j] = c;
+				j++;
+			}
 		}
 	}
 	printf("key candidates of ciphertext with the starting offset of %d are\n", offset);
-	print_byte_sequence(key_cand, k);
+	print_byte_sequence(key_cand, j);
 }
 
 void check_space(unsigned char ctxt[], size_t ctxt_len, size_t key_len)
