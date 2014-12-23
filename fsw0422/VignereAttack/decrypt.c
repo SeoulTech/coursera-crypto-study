@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	key_len = 7;
 	/** try every offset of plain text that is <ciphertext> mod(key_len) **/
 	for (i = 0; i < key_len; i++) {
-		//printf("--------starting from offset %d----------\n", i);
+		printf("--------starting from offset %d----------\n", i);
 		guess(byte_buf, byte_len, key_len, i);
 	}
 
