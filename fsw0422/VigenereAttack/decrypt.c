@@ -23,14 +23,8 @@ void print_byte_sequence_char(unsigned char arr[], size_t len);
 
 int main(int argc, char *argv[])
 {
-	unsigned char ctxt_buf[MAX_BUF_LEN];
-	size_t ctxt_len;
-	unsigned char byte_buf[MAX_BUF_LEN];
-	size_t byte_len;
-	unsigned char *key;
-	size_t key_len;
-	unsigned char dec_buf[MAX_BUF_LEN];
-	size_t dec_len;
+	unsigned char ctxt_buf[MAX_BUF_LEN], byte_buf[MAX_BUF_LEN], dec_buf[MAX_BUF_LEN], *key;
+	size_t ctxt_len, byte_len, dec_len, key_len;
 	FILE *fp_in;
 	size_t bytes_read;
 	int i, j;
@@ -179,7 +173,8 @@ void guess(unsigned char byt_arr[], size_t byt_arr_len, size_t key_len, size_t o
 		}
 
 		/* print the key candidates (still don't get why offset 0 and 1 include oth chars) */
-		//printf("when key is 0x%x: lwr_case: %d, upr_case: %d, spc: %d, punc: %d, nl: %d oth: %d\n", (unsigned char) i, lwr_case, upr_case, spc, punc, nl, oth); 
+		//printf("when key is 0x%x: lwr_case: %d, upr_case: %d, spc: %d, punc: %d, nl: %d oth: %d\n", 
+		//       (unsigned char) i, lwr_case, upr_case, spc, punc, nl, oth); 
 	}
 }
 
@@ -189,7 +184,6 @@ void print_byte_sequence_hex(unsigned char arr[], size_t len)
 
 	for (i = 0; i < len; i++)
 		printf("0x%X", arr[i]);
-
 	printf("\n");
 }
 
@@ -199,7 +193,6 @@ void print_byte_sequence_char(unsigned char arr[], size_t len)
 
 	for (i = 0; i < len; i++)
 		printf("%c", arr[i]);
-
 	printf("\n");
 }
 
