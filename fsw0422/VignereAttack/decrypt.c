@@ -173,9 +173,18 @@ void guess(unsigned char byt_arr[], size_t byt_arr_len, size_t key_len, size_t o
 		}
 
 		/* print the key candidates (still don't get why offset 0 and 1 include oth chars) */
-		//printf("when key is 0x%x: lwr_case: %d, upr_case: %d, spc: %d, punc: %d, nl: %d oth: %d\n", 
-		//       (unsigned char) i, lwr_case, upr_case, spc, punc, nl, oth); 
+		printf("when key is 0x%x: lwr_case: %d, upr_case: %d, spc: %d, punc: %d, nl: %d oth: %d\n", 
+		       (unsigned char) i, lwr_case, upr_case, spc, punc, nl, oth); 
 	}
+}
+
+unsigned char convert_hexstr_to_byte(char *hex_str)
+{
+	unsigned int val;
+	int i;
+
+	sscanf(hex_str, "%x" , &val);
+	return (unsigned char) val;
 }
 
 void print_byte_sequence_hex(unsigned char arr[], size_t len)
@@ -194,13 +203,4 @@ void print_byte_sequence_char(unsigned char arr[], size_t len)
 	for (i = 0; i < len; i++)
 		printf("%c", arr[i]);
 	printf("\n");
-}
-
-unsigned char convert_hexstr_to_byte(char *hex_str)
-{
-	unsigned int val;
-	int i;
-
-	sscanf(hex_str, "%x" , &val);
-	return (unsigned char) val;
 }
